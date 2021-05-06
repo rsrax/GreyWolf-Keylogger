@@ -36,7 +36,6 @@ void quit_handler(int sig)
 
 int main(int argc, char const *argv[])
 {
-
     MainScreenMenu();
     return 0;
 }
