@@ -34,6 +34,8 @@ void quit_handler(int sig)
     exit(0);
 }
 
+void server_quit_handler(int sig);
+
 int main(int argc, char const *argv[])
 {
     MainScreenMenu();
@@ -135,10 +137,11 @@ void CreateExploitSaveFile(int *outputfd)
     }
 }
 
+int outputfd, listenfd, connectionfd;
+
 void ChooseExploitServer()
 {
     PrintName();
-    int outputfd, listenfd, connectionfd;
     struct sockaddr_storage target_address;
     socklen_t target_address_len;
     char target_hostname[MAXLINE], target_port[MAXLINE];
@@ -168,4 +171,13 @@ void ChooseExploitServer()
             exit(0);
         }
     }
+}
+
+void server_quit_handler(int sig)
+{
+    close(outputfd);
+    close(listenfd);
+    close(connectionfd);
+    system("clear");
+    exit(0);
 }
