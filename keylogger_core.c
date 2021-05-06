@@ -10,7 +10,7 @@
 
 #define MAXLINE 8192
 
-static const char *keycodes[] =
+static const char keycodes[120][MAXLINE] =
     {
         "RESERVED", "ESC", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
         "-", "=", "BACKSPACE", "TAB", "q", "w", "e", "r", "t", "y", "u", "i",
@@ -25,7 +25,7 @@ static const char *keycodes[] =
         "DOWN", "PAGE_DOWN", "INSERT", "DELETE", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
         "PAUSE"};
 
-static const char *shifted_keycodes[] =
+static const char shifted_keycodes[120][MAXLINE] =
     {
         "RESERVED", "ESC", "!", "@", "#", "$", "%%", "^", "&", "*", "(", ")",
         "_", "+", "BACKSPACE", "TAB", "Q", "W", "E", "R", "T", "Y", "U", "I",
@@ -54,7 +54,7 @@ void get_keyboard_file(char *kbdfile)
             if (strstr(dir->d_name, "kbd"))
             {
                 snprintf(buffer, 8000, "%s%s", dr, dir->d_name);
-                printf("%s\n", buffer);
+                printf("\nFound keyboard file:%s\n", buffer);
                 strcpy(kbdfile, buffer);
                 break;
             }
