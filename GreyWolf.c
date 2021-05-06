@@ -100,7 +100,7 @@ int ChooseFile()
     printf("\nPress Ctrl-C to Quit\nPress Ctrl-Z to Go Back\n\nEnter File Path:");
     scanf("%s", fpath);
     printf("Set File Path:%s\n", fpath);
-    if ((output_fd = open(fpath, O_WRONLY | O_APPEND | O_CREAT)) < 0)
+    if ((output_fd = open(fpath, O_WRONLY | O_APPEND | O_CREAT, 0777)) < 0)
     {
         printf("Error accessing file %s: %s\n", fpath, strerror(errno));
         output_fd = ChooseFile();
@@ -129,7 +129,7 @@ void CreateExploitSaveFile(int *outputfd)
     printf("\nEnter File Path:");
     scanf("%s", fpath);
     printf("Set File Path:%s\n", fpath);
-    if ((*outputfd = open(fpath, O_WRONLY | O_APPEND | O_CREAT)) < 0)
+    if ((*outputfd = open(fpath, O_WRONLY | O_APPEND | O_CREAT, 0777)) < 0)
     {
         printf("Error accessing/creating file %s: %s\n", fpath, strerror(errno));
         CreateExploitSaveFile(outputfd);
