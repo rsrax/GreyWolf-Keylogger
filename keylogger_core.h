@@ -1,0 +1,1 @@
+void keylogger(int output_fd);
