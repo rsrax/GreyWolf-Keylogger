@@ -148,7 +148,6 @@ void ChooseExploitServer()
     ssize_t n;
     char buf[MAXLINE];
     listenfd = exploit_serverfd(PORT);
-    CreateExploitSaveFile(&outputfd);
     printf("\nPress Ctrl-C to Quit\n");
     while (1)
     {
@@ -158,6 +157,7 @@ void ChooseExploitServer()
         getnameinfo((struct sockaddr *)&target_address, target_address_len,
                     target_hostname, MAXLINE, target_port, MAXLINE, 0);
         printf("Connected to (%s, %s)\n", target_hostname, target_port);
+        CreateExploitSaveFile(&outputfd);
         printf("Start Communication with Target\n");
         if (!fork())
         {
